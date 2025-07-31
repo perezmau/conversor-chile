@@ -144,6 +144,30 @@
             color: #495057;
         }
 
+        .currency-input-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .currency-symbol {
+            position: absolute;
+            left: 15px;
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: #27ae60;
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        .currency-input {
+            padding-left: 35px !important;
+            font-size: 1.6rem !important;
+            font-weight: 600 !important;
+            text-align: left;
+            letter-spacing: 0.5px;
+        }
+
         .input-field {
             width: 100%;
             padding: 12px;
@@ -357,18 +381,18 @@
                 </div>
                 
                 <div class="rate-item">
-                    <span class="rate-label">💱 USD/CLP</span>
-                    <input type="number" class="editable" id="usdClp" value="972.21" step="0.01">
+                    <span class="rate-label">🇺🇸 <strong>USD</strong> / 🇨🇱 <strong>CLP</strong></span>
+                    <input type="text" class="editable" id="usdClp" value="972,21" step="0.01">
                 </div>
                 
                 <div class="rate-item">
-                    <span class="rate-label">🇺🇸 Dólar MEP (AL30D)</span>
-                    <input type="number" class="editable" id="dolarMEP" value="1350" step="0.01">
+                    <span class="rate-label">🇺🇸 <strong>USD MEP (AL30D)</strong> / 🇦🇷 <strong>$ ARS</strong></span>
+                    <input type="text" class="editable" id="dolarMEP" value="1.350,00" step="0.01">
                 </div>
                 
                 <div class="rate-item">
-                    <span class="rate-label">🏛️ Dólar Banco Nación</span>
-                    <input type="number" class="editable" id="dolarNacion" value="1355" step="0.01">
+                    <span class="rate-label">🇺🇸 <strong>USD Banco Nación</strong> / 🇦🇷 <strong>$ ARS</strong></span>
+                    <input type="text" class="editable" id="dolarNacion" value="1.355,00" step="0.01">
                 </div>
                 
                 <div class="last-update" id="lastUpdate">
@@ -380,7 +404,10 @@
             <div class="converter-section">
                 <div class="input-group">
                     <label class="input-label" for="clpAmount">💰 Monto en Pesos Chilenos (CLP)</label>
-                    <input type="number" class="input-field" id="clpAmount" placeholder="Ej: 75000" step="1">
+                    <div class="currency-input-container">
+                        <span class="currency-symbol">$</span>
+                        <input type="text" class="input-field currency-input" id="clpAmount" placeholder="75.000" inputmode="numeric">
+                    </div>
                 </div>
 
                 <div class="input-group">
@@ -433,17 +460,7 @@
                     </thead>
                     <tbody>
                         <tr>
-                            <td class="category">📱 Electrónicos</td>
-                            <td class="amount">300</td>
-                            <td class="tax">50%</td>
-                        </tr>
-                        <tr>
-                            <td class="category">👕 Ropa y Calzado</td>
-                            <td class="amount">300</td>
-                            <td class="tax">50%</td>
-                        </tr>
-                        <tr>
-                            <td class="category">🏠 Electrodomésticos</td>
+                            <td class="category">🛍️ Productos Generales<br><small style="opacity: 0.7;">(Electrónicos, Ropa, Electrodomésticos)</small></td>
                             <td class="amount">300</td>
                             <td class="tax">50%</td>
                         </tr>
@@ -479,6 +496,70 @@
     <script>
         let selectedDollarType = 'mep';
 
+        // Formatear número con puntos de miles y coma decimal (formato chileno/argentino)
+        function formatNumber(num) {
+            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        }
+
+        // Formatear número con decimales (punto de miles, coma decimal)
+        function formatNumberWithDecimals(num, decimals = 2) {
+            const parts = num.toFixed(decimals).split('.');
+            const integerPart = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+            const decimalPart = parts[1];
+            return `${integerPart}<sup style="font-size: 0.7em; opacity: 0.7;">,${decimalPart}</sup>`;
+        }
+
+        // Formatear moneda completa
+        function formatCurrency(amount, currency, decimals = 2) {
+            if (currency === 'USD') {
+                return `$ ${formatNumberWithDecimals(amount, decimals)} ${currency}`;
+            } else if (currency === 'ARS') {
+                return `$ ${formatNumber(Math.round(amount))} ${currency}`;
+            }
+            return `$ ${formatNumber(amount)} ${currency}`;
+        }
+
+        // Remover formato para cálculos
+        function unformatNumber(str) {
+            return str.replace(/\./g, '');
+        }
+
+        // Función para manejar campos editables de cotizaciones
+        function handleRateInput(e) {
+            let value = e.target.value;
+            // Permitir números, comas y puntos
+            value = value.replace(/[^\d.,]/g, '');
+            e.target.value = value;
+        }
+
+        // Función para convertir valor de cotización a número
+        function parseRateValue(str) {
+            // Convertir formato chileno/argentino a número
+            return parseFloat(str.replace(/\./g, '').replace(',', '.'));
+        }
+
+        // Manejar entrada con formato de miles
+        function handleCurrencyInput(e) {
+            let value = e.target.value;
+            // Remover todo excepto números
+            value = value.replace(/[^\d]/g, '');
+            
+            if (value) {
+                // Formatear con puntos de miles
+                const formatted = formatNumber(value);
+                e.target.value = formatted;
+            }
+            
+            // Convertir automáticamente
+            if (value) {
+                convertCurrency();
+            } else {
+                // Limpiar resultados si no hay valor
+                document.getElementById('usdResult').textContent = '$ 0 USD';
+                document.getElementById('arsResult').textContent = '$ 0 ARS';
+            }
+        }
+
         function selectDollarType(type) {
             selectedDollarType = type;
             
@@ -501,7 +582,8 @@
         }
 
         function convertCurrency() {
-            const clpAmount = parseFloat(document.getElementById('clpAmount').value);
+            const clpInput = document.getElementById('clpAmount').value;
+            const clpAmount = parseFloat(unformatNumber(clpInput));
             
             if (!clpAmount || clpAmount <= 0) {
                 // Mostrar estado inicial
@@ -510,10 +592,10 @@
                 return;
             }
 
-            // Obtener cotizaciones
-            const usdClp = parseFloat(document.getElementById('usdClp').value);
-            const dolarMEP = parseFloat(document.getElementById('dolarMEP').value);
-            const dolarNacion = parseFloat(document.getElementById('dolarNacion').value);
+            // Obtener cotizaciones con parsing correcto
+            const usdClp = parseRateValue(document.getElementById('usdClp').value);
+            const dolarMEP = parseRateValue(document.getElementById('dolarMEP').value);
+            const dolarNacion = parseRateValue(document.getElementById('dolarNacion').value);
 
             // Conversión principal: CLP a USD
             const usdAmount = clpAmount / usdClp;
@@ -523,9 +605,9 @@
             const arsAmount = usdAmount * arsRate;
             const dollarTypeName = selectedDollarType === 'mep' ? 'MEP' : 'Nación';
 
-            // Mostrar resultados
-            document.getElementById('usdResult').textContent = `$ ${usdAmount.toFixed(2)} USD`;
-            document.getElementById('arsResult').textContent = `$ ${Math.round(arsAmount).toLocaleString('es-AR')} ARS (${dollarTypeName})`;
+            // Mostrar resultados con formato chileno/argentino
+            document.getElementById('usdResult').innerHTML = formatCurrency(usdAmount, 'USD', 2);
+            document.getElementById('arsResult').innerHTML = `${formatCurrency(arsAmount, 'ARS')} (${dollarTypeName})`;
 
             // Efecto visual
             const resultSection = document.getElementById('resultSection');
@@ -535,10 +617,8 @@
             }, 150);
         }
 
-        // Conversión automática al escribir
-        document.getElementById('clpAmount').addEventListener('input', function() {
-            convertCurrency();
-        });
+        // Configurar evento de entrada con formato
+        document.getElementById('clpAmount').addEventListener('input', handleCurrencyInput);
 
         // Inicializar timestamp
         updateRates();
@@ -552,6 +632,7 @@
 
         // Actualizar conversión cuando se cambian las cotizaciones
         document.querySelectorAll('.editable').forEach(input => {
+            input.addEventListener('input', handleRateInput);
             input.addEventListener('change', function() {
                 const clpAmount = document.getElementById('clpAmount').value;
                 if (clpAmount) {
