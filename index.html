@@ -337,6 +337,25 @@
             color: #e74c3c;
         }
 
+        .highlight-warning {
+            background: linear-gradient(45deg, #ff6b6b, #ffd93d, #6bcf7f, #4ecdc4, #45b7d1);
+            background-size: 400% 400%;
+            animation: gradientShift 3s ease-in-out infinite;
+            padding: 4px 8px;
+            border-radius: 8px;
+            font-weight: bold;
+            color: #2c3e50;
+            display: inline-block;
+            margin-top: 5px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
         .note {
             font-size: 0.75rem;
             color: #6c757d;
@@ -372,7 +391,7 @@
     <div class="container">
         <div class="header">
             <h1>🇨🇱 Conversor CLP</h1>
-            <p>Comprar en Chile</p>
+            <p>Tu guía completa para Chile</p>
         </div>
 
         <div class="content">
@@ -472,12 +491,7 @@
                             <td class="amount">Sin límite</td>
                             <td class="tax">0%</td>
                         </tr>
-                        <tr>
-                            <td class="category">💊 Medicamentos</td>
-                            <td class="amount">Uso personal</td>
-                            <td class="tax">0%</td>
-                        </tr>
-                        <tr>
+                         <tr>
                             <td class="category">🍷 Bebidas Alcohólicas</td>
                             <td class="amount">2 litros</td>
                             <td class="tax">Variable</td>
@@ -489,8 +503,7 @@
                     <strong>⚠️ Notas Importantes:</strong><br>
                     • Los cupos <strong>NO son acumulables</strong> entre personas<br>
                     • Los valores se calculan sobre <strong>precios reales o estimados por Aduana</strong><br>
-                    • Si el total supera USD 300, se tributa <strong>50% del excedente</strong><br>
-                    • <strong>iMPORTANTE:</strong> NO COMPRAR BOLUDECES)
+                    • <span class="highlight-warning">💡 Muy importante:NO compre Boludeces</span>
                 </div>
             </div>
         </div>
