@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conversor CLP - Viaje a Chile</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 10px;
+        }
+
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+        }
+
+        .header p {
+            opacity: 0.8;
+            font-size: 0.9rem;
+        }
+
+        .content {
+            padding: 20px;
+        }
+
+        .rates-section {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-left: 4px solid #3498db;
+        }
+
+        .rates-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .rates-title {
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .update-btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .update-btn:hover {
+            background: #2980b9;
+            transform: translateY(-1px);
+        }
+
+        .rate-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            padding: 8px 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .rate-item:last-child {
+            border-bottom: none;
+        }
+
+        .rate-label {
+            font-weight: 500;
+            color: #495057;
+        }
+
+        .rate-value {
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .editable {
+            background: none;
+            border: none;
+            text-align: right;
+            font-weight: bold;
+            color: #2c3e50;
+            width: 100px;
+            padding: 2px;
+            border-radius: 4px;
+        }
+
+        .editable:focus {
+            background: #fff3cd;
+            outline: 2px solid #ffc107;
+        }
+
+        .last-update {
+            font-size: 0.7rem;
+            color: #6c757d;
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        .converter-section {
+            margin-bottom: 20px;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        .input-label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #495057;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+
+        .selector-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .selector-btn {
+            padding: 10px;
+            border: 2px solid #e9ecef;
+            background: white;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+        }
+
+        .selector-btn.active {
+            background: #3498db;
+            color: white;
+            border-color: #3498db;
+        }
+
+        .convert-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 20px;
+        }
+
+        .convert-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(46, 204, 113, 0.4);
+        }
+
+        .result-section {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .result-primary {
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .result-title {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            margin-bottom: 5px;
+        }
+
+        .result-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .result-secondary {
+            opacity: 0.9;
+        }
+
+        .result-secondary-title {
+            font-size: 0.8rem;
+            margin-bottom: 5px;
+        }
+
+        .result-secondary-value {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .customs-section {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-left: 4px solid #e74c3c;
+        }
+
+        .customs-title {
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        .customs-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+
+        .customs-table th {
+            background: #e74c3c;
+            color: white;
+            padding: 8px 6px;
+            text-align: left;
+            font-size: 0.8rem;
+        }
+
+        .customs-table td {
+            padding: 8px 6px;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .customs-table tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        .customs-table tr:hover {
+            background: #e3f2fd;
+        }
+
+        .category {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .amount {
+            font-weight: bold;
+            color: #27ae60;
+        }
+
+        .tax {
+            font-weight: bold;
+            color: #e74c3c;
+        }
+
+        .note {
+            font-size: 0.75rem;
+            color: #6c757d;
+            margin-top: 10px;
+            padding: 8px;
+            background: #fff3cd;
+            border-radius: 5px;
+            border-left: 3px solid #ffc107;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                margin: 5px;
+                border-radius: 15px;
+            }
+            
+            .content {
+                padding: 15px;
+            }
+
+            .customs-table {
+                font-size: 0.75rem;
+            }
+
+            .customs-table th,
+            .customs-table td {
+                padding: 6px 4px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🇨🇱 Conversor CLP</h1>
+            <p>Tu guía completa para Chile</p>
+        </div>
+
+        <div class="content">
+            <!-- Sección de Cotizaciones -->
+            <div class="rates-section">
+                <div class="rates-header">
+                    <span class="rates-title">📊 Cotizaciones Actuales</span>
+                    <button class="update-btn" onclick="updateRates()">Actualizar</button>
+                </div>
+                
+                <div class="rate-item">
+                    <span class="rate-label">💱 USD/CLP</span>
+                    <input type="number" class="editable" id="usdClp" value="972.21" step="0.01">
+                </div>
+                
+                <div class="rate-item">
+                    <span class="rate-label">🇺🇸 Dólar MEP (AL30D)</span>
+                    <input type="number" class="editable" id="dolarMEP" value="1350" step="0.01">
+                </div>
+                
+                <div class="rate-item">
+                    <span class="rate-label">🏛️ Dólar Banco Nación</span>
+                    <input type="number" class="editable" id="dolarNacion" value="1355" step="0.01">
+                </div>
+                
+                <div class="last-update" id="lastUpdate">
+                    Última actualización: --
+                </div>
+            </div>
+
+            <!-- Conversor -->
+            <div class="converter-section">
+                <div class="input-group">
+                    <label class="input-label" for="clpAmount">💰 Monto en Pesos Chilenos (CLP)</label>
+                    <input type="number" class="input-field" id="clpAmount" placeholder="Ej: 75000" step="1">
+                </div>
+
+                <div class="input-group">
+                    <label class="input-label">🔄 Tipo de Dólar Argentino</label>
+                    <div class="selector-group">
+                        <button class="selector-btn active" id="mepBtn" onclick="selectDollarType('mep')">
+                            MEP (AL30D)
+                        </button>
+                        <button class="selector-btn" id="nacionBtn" onclick="selectDollarType('nacion')">
+                            Banco Nación
+                        </button>
+                    </div>
+                </div>
+
+                <button class="convert-btn" onclick="convertCurrency()">
+                    🔄 Convertir Moneda
+                </button>
+            </div>
+
+            <!-- Resultados -->
+            <div class="result-section" id="resultSection">
+                <div class="result-primary">
+                    <div class="result-title">🇺🇸 Conversión Principal: CLP → USD</div>
+                    <div class="result-value" id="usdResult">$ 0 USD</div>
+                </div>
+                <div class="result-secondary">
+                    <div class="result-secondary-title">🇦🇷 Equivalente en Pesos Argentinos</div>
+                    <div class="result-secondary-value" id="arsResult">$ 0 ARS</div>
+                </div>
+            </div>
+
+            <!-- Cupos Aduaneros -->
+            <div class="customs-section">
+                <div class="customs-title">
+                    🛃 Cupos Vía Terrestre - Aduana Argentina
+                </div>
+                
+                <div class="note" style="margin-bottom: 15px; background: #e8f5e8; border-left-color: #27ae60;">
+                    <strong>💰 Cupo Total Equipaje Acompañado:</strong> USD 300 por persona mayor de 16 años.<br>
+                    <strong>📊 Impuesto:</strong> 50% sobre el valor que exceda este monto.
+                </div>
+                
+                <table class="customs-table">
+                    <thead>
+                        <tr>
+                            <th>Categoría</th>
+                            <th>Cupo (USD)</th>
+                            <th>Excedente</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="category">📱 Electrónicos</td>
+                            <td class="amount">300</td>
+                            <td class="tax">50%</td>
+                        </tr>
+                        <tr>
+                            <td class="category">👕 Ropa y Calzado</td>
+                            <td class="amount">300</td>
+                            <td class="tax">50%</td>
+                        </tr>
+                        <tr>
+                            <td class="category">🏠 Electrodomésticos</td>
+                            <td class="amount">300</td>
+                            <td class="tax">50%</td>
+                        </tr>
+                        <tr>
+                            <td class="category">📚 Libros</td>
+                            <td class="amount">Sin límite</td>
+                            <td class="tax">0%</td>
+                        </tr>
+                        <tr>
+                            <td class="category">💊 Medicamentos</td>
+                            <td class="amount">Uso personal</td>
+                            <td class="tax">0%</td>
+                        </tr>
+                        <tr>
+                            <td class="category">🍷 Bebidas Alcohólicas</td>
+                            <td class="amount">2 litros</td>
+                            <td class="tax">Variable</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="note">
+                    <strong>⚠️ Notas Importantes:</strong><br>
+                    • Los cupos <strong>NO son acumulables</strong> entre personas<br>
+                    • Los valores se calculan sobre <strong>precios reales o estimados por Aduana</strong><br>
+                    • Si el total supera USD 300, se tributa <strong>50% del excedente</strong><br>
+                    • <strong>Menores de 16 años:</strong> cupo reducido (habitualmente la mitad)
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let selectedDollarType = 'mep';
+
+        function selectDollarType(type) {
+            selectedDollarType = type;
+            
+            // Actualizar botones
+            document.getElementById('mepBtn').classList.toggle('active', type === 'mep');
+            document.getElementById('nacionBtn').classList.toggle('active', type === 'nacion');
+        }
+
+        function updateRates() {
+            const now = new Date();
+            const timestamp = now.toLocaleDateString('es-AR') + ' ' + now.toLocaleTimeString('es-AR', {hour: '2-digit', minute: '2-digit'});
+            document.getElementById('lastUpdate').textContent = `Última actualización: ${timestamp}`;
+            
+            // Animación del botón
+            const btn = document.querySelector('.update-btn');
+            btn.style.transform = 'rotate(360deg)';
+            setTimeout(() => {
+                btn.style.transform = 'rotate(0deg)';
+            }, 500);
+        }
+
+        function convertCurrency() {
+            const clpAmount = parseFloat(document.getElementById('clpAmount').value);
+            
+            if (!clpAmount || clpAmount <= 0) {
+                // Mostrar estado inicial
+                document.getElementById('usdResult').textContent = '$ 0 USD';
+                document.getElementById('arsResult').textContent = '$ 0 ARS';
+                return;
+            }
+
+            // Obtener cotizaciones
+            const usdClp = parseFloat(document.getElementById('usdClp').value);
+            const dolarMEP = parseFloat(document.getElementById('dolarMEP').value);
+            const dolarNacion = parseFloat(document.getElementById('dolarNacion').value);
+
+            // Conversión principal: CLP a USD
+            const usdAmount = clpAmount / usdClp;
+
+            // Conversión secundaria: USD a ARS según tipo seleccionado
+            const arsRate = selectedDollarType === 'mep' ? dolarMEP : dolarNacion;
+            const arsAmount = usdAmount * arsRate;
+            const dollarTypeName = selectedDollarType === 'mep' ? 'MEP' : 'Nación';
+
+            // Mostrar resultados
+            document.getElementById('usdResult').textContent = `$ ${usdAmount.toFixed(2)} USD`;
+            document.getElementById('arsResult').textContent = `$ ${Math.round(arsAmount).toLocaleString('es-AR')} ARS (${dollarTypeName})`;
+
+            // Efecto visual
+            const resultSection = document.getElementById('resultSection');
+            resultSection.style.transform = 'scale(0.98)';
+            setTimeout(() => {
+                resultSection.style.transform = 'scale(1)';
+            }, 150);
+        }
+
+        // Conversión automática al escribir
+        document.getElementById('clpAmount').addEventListener('input', function() {
+            convertCurrency();
+        });
+
+        // Inicializar timestamp
+        updateRates();
+
+        // Permitir Enter para convertir
+        document.getElementById('clpAmount').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                convertCurrency();
+            }
+        });
+
+        // Actualizar conversión cuando se cambian las cotizaciones
+        document.querySelectorAll('.editable').forEach(input => {
+            input.addEventListener('change', function() {
+                const clpAmount = document.getElementById('clpAmount').value;
+                if (clpAmount) {
+                    convertCurrency();
+                }
+                updateRates();
+            });
+        });
+
+        // Inicializar vista
+        convertCurrency();
+    </script>
+</body>
+</html>
