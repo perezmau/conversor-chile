@@ -401,7 +401,7 @@
     <div class="container">
         <div class="header">
             <h1><span class="flag-icon flag-icon-cl"></span> Conversor CLP</h1>
-            <p>Tu guía completa para Chile</p>
+            <p>Mi guía timbera para Chile</p>
         </div>
         <div class="content">
             <!-- Sección de Cotizaciones -->
@@ -423,7 +423,7 @@
                             <strong>CLP</strong>
                         </div>
                     </span>
-                    <input type="text" class="editable" id="usdClp" value="972,21" step="0.01">
+                    <input type="text" class="editable" id="usdClp" placeholder="Cargando..." step="0.01">
                 </div>
                 
                 <div class="rate-item">
@@ -438,7 +438,7 @@
                             <strong>$ ARS</strong>
                         </div>
                     </span>
-                    <input type="text" class="editable" id="dolarMEP" value="1.350,00" step="0.01">
+                    <input type="text" class="editable" id="dolarMEP" placeholder="Cargando..." step="0.01">
                 </div>
                 
                 <div class="rate-item">
@@ -453,7 +453,7 @@
                             <strong>$ ARS</strong>
                         </div>
                     </span>
-                    <input type="text" class="editable" id="dolarNacion" value="1.355,00" step="0.01">
+                    <input type="text" class="editable" id="dolarNacion" placeholder="Cargando..." step="0.01">
                 </div>
                 
                 <div class="last-update" id="lastUpdate">
@@ -647,19 +647,72 @@
             // Actualizar botones
             document.getElementById('mepBtn').classList.toggle('active', type === 'mep');
             document.getElementById('nacionBtn').classList.toggle('active', type === 'nacion');
+
+            // Si ya hay un monto, recalcular al cambiar de tipo de dólar
+            if (document.getElementById('clpAmount').value) {
+                convertCurrency();
+            }
         }
         
-        function updateRates() {
-            const now = new Date();
-            const timestamp = now.toLocaleDateString('es-AR') + ' ' + now.toLocaleTimeString('es-AR', {hour: '2-digit', minute: '2-digit'});
-            document.getElementById('lastUpdate').textContent = `Última actualización: ${timestamp}`;
-            
-            // Animación del botón
+        async function updateRates() {
             const btn = document.querySelector('.update-btn');
+            const convertBtn = document.querySelector('.convert-btn');
+            const lastUpdateEl = document.getElementById('lastUpdate');
+            const usdClpInput = document.getElementById('usdClp');
+            const dolarMEPInput = document.getElementById('dolarMEP');
+            const dolarNacionInput = document.getElementById('dolarNacion');
+
+            // Iniciar estado de carga
+            btn.disabled = true;
+            convertBtn.disabled = true;
+            btn.textContent = 'Cargando...';
             btn.style.transform = 'rotate(360deg)';
-            setTimeout(() => {
+            lastUpdateEl.textContent = 'Actualizando cotizaciones...';
+
+            try {
+                // Usamos Promise.all para obtener todas las cotizaciones en paralelo
+                const [clpResponse, mepResponse, nacionResponse] = await Promise.all([
+                    fetch('https://cl.dolarapi.com/v1/cotizaciones/usd'),
+                    fetch('https://dolarapi.com/v1/dolares/bolsa'),      // Dólar MEP
+                    fetch('https://dolarapi.com/v1/dolares/oficial')   // Dólar Oficial (Nación)
+                ]);
+
+                if (!clpResponse.ok) throw new Error(`Error en API Chilena: ${clpResponse.statusText}`);
+                if (!mepResponse.ok) throw new Error(`Error en API Dólar MEP: ${mepResponse.statusText}`);
+                if (!nacionResponse.ok) throw new Error(`Error en API Dólar Nación: ${nacionResponse.statusText}`);
+                
+                const clpData = await clpResponse.json();
+                const mepData = await mepResponse.json();
+                const nacionData = await nacionResponse.json();
+                
+                // Usamos el valor de "venta" de cada API y lo formateamos
+                usdClpInput.value = clpData.venta.toFixed(2).replace('.', ',');
+                dolarMEPInput.value = mepData.venta.toFixed(2).replace('.', ',');
+                dolarNacionInput.value = nacionData.venta.toFixed(2).replace('.', ',');
+                
+                // Actualizamos el timestamp con la fecha de la API argentina (más volátil)
+                const apiDate = new Date(mepData.fechaActualizacion);
+                const timestamp = apiDate.toLocaleString('es-AR', {
+                    year: 'numeric', month: '2-digit', day: '2-digit',
+                    hour: '2-digit', minute: '2-digit'
+                });
+                lastUpdateEl.textContent = `Última actualización: ${timestamp}`;
+
+                // Si hay un monto ingresado, recalcular con los nuevos valores
+                if (document.getElementById('clpAmount').value) {
+                    convertCurrency();
+                }
+
+            } catch (error) {
+                console.error('Error al obtener las cotizaciones:', error);
+                lastUpdateEl.textContent = 'Error al actualizar. Intente de nuevo.';
+            } finally {
+                // Finalizar estado de carga
+                btn.disabled = false;
+                convertBtn.disabled = false;
+                btn.textContent = 'Actualizar';
                 btn.style.transform = 'rotate(0deg)';
-            }, 500);
+            }
         }
         
         function convertCurrency() {
@@ -680,6 +733,12 @@
             const dolarMEP = parseRateValue(document.getElementById('dolarMEP').value);
             const dolarNacion = parseRateValue(document.getElementById('dolarNacion').value);
             
+            // VALIDACIÓN: Si las cotizaciones no son números válidos (aún no cargaron), no hacer nada.
+            if (isNaN(usdClp) || isNaN(dolarMEP) || isNaN(dolarNacion)) {
+                console.warn("Intento de conversión sin cotizaciones válidas. Esperando carga de API.");
+                return;
+            }
+
             // Conversión principal: CLP a USD
             const usdAmount = clpAmount / usdClp;
             
@@ -744,11 +803,11 @@
         document.querySelectorAll('.editable').forEach(input => {
             input.addEventListener('input', handleRateInput);
             input.addEventListener('change', function() {
-                const clpAmount = document.getElementById('clpAmount').value;
-                if (clpAmount) {
+                // Al cambiar una cotización manualmente, solo recalculamos.
+                // La API se usa con el botón "Actualizar".
+                if (document.getElementById('clpAmount').value) {
                     convertCurrency();
                 }
-                updateRates();
             });
         });
         
