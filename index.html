@@ -508,12 +508,12 @@
                     <!-- Total del producto -->
                     <div class="result-total" id="totalSection" style="display: none;">
                         <div class="result-total-title">Total + Imp 50%</div>
-                        <div class="result-total-value" id="totalUsdResult">🇺🇸 0 USD</div>
+                        <div class="result-total-value" id="totalUsdResult">🇺🇸 $ 0 USD</div>
                     </div>
                 </div>
                 <div class="result-secondary">
                     <div class="result-secondary-title">🇦🇷</div>
-                    <div class="result-secondary-value" id="arsResult">$ 0</div>
+                    <div class="result-secondary-value" id="arsResult">🇦🇷 $ 0</div>
                 </div>
             </div>
 
@@ -665,8 +665,8 @@
             
             if (!clpAmount || clpAmount <= 0) {
                 // Mostrar estado inicial
-                document.getElementById('usdResult').textContent = '$ 0 USD';
-                document.getElementById('arsResult').textContent = '$ 0 ARS';
+                document.getElementById('usdResult').innerHTML = '🇺🇸 $ 0 USD';
+                document.getElementById('arsResult').innerHTML = '🇦🇷 $ 0';
                 document.getElementById('excessSection').style.display = 'none';
                 document.getElementById('totalSection').style.display = 'none';
                 return;
@@ -697,14 +697,14 @@
                 document.getElementById('excessSection').style.display = 'block';
                 document.getElementById('totalSection').style.display = 'block';
                 
-                document.getElementById('excessResult').innerHTML = formatCurrency(excessAmount, 'USD', 2);
-                document.getElementById('taxResult').innerHTML = formatCurrency(taxAmount, 'USD', 2);
-                document.getElementById('totalUsdResult').innerHTML = formatCurrency(finalTotal, 'USD', 2);
+                document.getElementById('excessResult').innerHTML = `🇺🇸 $ ${formatNumberWithDecimals(excessAmount, 2)} USD`;
+                document.getElementById('taxResult').innerHTML = `🇺🇸 $ ${formatNumberWithDecimals(taxAmount, 2)} USD`;
+                document.getElementById('totalUsdResult').innerHTML = `🇺🇸 $ ${formatNumberWithDecimals(finalTotal, 2)} USD`;
             } else {
                 // Ocultar sección de excedente
                 document.getElementById('excessSection').style.display = 'none';
                 document.getElementById('totalSection').style.display = 'block';
-                document.getElementById('totalUsdResult').innerHTML = formatCurrency(usdAmount, 'USD', 2);
+                document.getElementById('totalUsdResult').innerHTML = `🇺🇸 $ ${formatNumberWithDecimals(usdAmount, 2)} USD`;
             }
 
             // Conversión secundaria: USD a ARS según tipo seleccionado (usar el total final)
@@ -712,9 +712,9 @@
             const arsAmount = finalTotal * arsRate;
             const dollarTypeName = selectedDollarType === 'mep' ? 'MEP' : 'Nación';
 
-            // Mostrar resultados con formato chileno/argentino
-            document.getElementById('usdResult').innerHTML = formatCurrency(usdAmount, 'USD', 2);
-            document.getElementById('arsResult').innerHTML = `${formatCurrency(arsAmount, 'ARS')} (${dollarTypeName})`;
+            // Mostrar resultados con formato y banderas
+            document.getElementById('usdResult').innerHTML = `🇺🇸 $ ${formatNumberWithDecimals(usdAmount, 2)} USD`;
+            document.getElementById('arsResult').innerHTML = `🇦🇷 $ ${formatNumber(Math.round(arsAmount))} (${dollarTypeName})`;
 
             // Efecto visual
             const resultSection = document.getElementById('resultSection');
