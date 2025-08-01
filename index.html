@@ -2,22 +2,25 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Conversor CLP - Viaje a Chile</title>
+    
+    <!-- Flag Icons CSS CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.5.0/css/flag-icon.min.css">
+    
     <style>
         * {
             margin: 0;
             padding: 0;
-            box-sizing: border-box; 
+            box-sizing: border-box;
         }
-
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             padding: 10px;
         }
-
         .container {
             max-width: 400px;
             margin: 0 auto;
@@ -26,28 +29,23 @@
             box-shadow: 0 20px 40px rgba(0,0,0,0.1);
             overflow: hidden;
         }
-
         .header {
             background: linear-gradient(135deg, #2c3e50, #34495e);
             color: white;
             padding: 20px;
             text-align: center;
         }
-
         .header h1 {
             font-size: 1.5rem;
             margin-bottom: 5px;
         }
-
         .header p {
             opacity: 0.8;
             font-size: 0.9rem;
         }
-
         .content {
             padding: 20px;
         }
-
         .rates-section {
             background: #f8f9fa;
             border-radius: 15px;
@@ -55,19 +53,16 @@
             margin-bottom: 20px;
             border-left: 4px solid #3498db;
         }
-
         .rates-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 15px;
         }
-
         .rates-title {
             font-weight: bold;
             color: #2c3e50;
         }
-
         .update-btn {
             background: #3498db;
             color: white;
@@ -78,12 +73,10 @@
             cursor: pointer;
             transition: all 0.3s;
         }
-
         .update-btn:hover {
             background: #2980b9;
             transform: translateY(-1px);
         }
-
         .rate-item {
             display: flex;
             justify-content: space-between;
@@ -91,21 +84,20 @@
             padding: 8px 0;
             border-bottom: 1px solid #e9ecef;
         }
-
         .rate-item:last-child {
             border-bottom: none;
         }
-
         .rate-label {
             font-weight: 500;
             color: #495057;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
-
         .rate-value {
             font-weight: bold;
             color: #2c3e50;
         }
-
         .editable {
             background: none;
             border: none;
@@ -116,40 +108,33 @@
             padding: 2px;
             border-radius: 4px;
         }
-
         .editable:focus {
             background: #fff3cd;
             outline: 2px solid #ffc107;
         }
-
         .last-update {
             font-size: 0.7rem;
             color: #6c757d;
             text-align: center;
             margin-top: 10px;
         }
-
         .converter-section {
             margin-bottom: 20px;
         }
-
         .input-group {
             margin-bottom: 15px;
         }
-
         .input-label {
             display: block;
             margin-bottom: 5px;
             font-weight: 500;
             color: #495057;
         }
-
         .currency-input-container {
             position: relative;
             display: flex;
             align-items: center;
         }
-
         .currency-symbol {
             position: absolute;
             left: 12px;
@@ -160,17 +145,15 @@
             pointer-events: none;
             display: flex;
             align-items: center;
-            gap: 2px;
+            gap: 5px;
         }
-
         .currency-input {
-            padding-left: 55px !important;
+            padding-left: 65px !important;
             font-size: 1.6rem !important;
             font-weight: 600 !important;
             text-align: left;
             letter-spacing: 0.5px;
         }
-
         .input-field {
             width: 100%;
             padding: 12px;
@@ -183,26 +166,22 @@
             transition: all 0.3s;
             background: #ffffff;
         }
-
         .input-field:focus {
             outline: none;
             border-color: #3498db;
             box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
             background: #f8f9fa;
         }
-
         .input-field::placeholder {
             color: #95a5a6;
             font-weight: 400;
         }
-
         .selector-group {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 10px;
             margin-bottom: 15px;
         }
-
         .selector-btn {
             padding: 10px;
             border: 2px solid #e9ecef;
@@ -212,13 +191,11 @@
             transition: all 0.3s;
             font-size: 0.9rem;
         }
-
         .selector-btn.active {
             background: #3498db;
             color: white;
             border-color: #3498db;
         }
-
         .convert-btn {
             width: 100%;
             padding: 15px;
@@ -232,12 +209,10 @@
             transition: all 0.3s;
             margin-bottom: 20px;
         }
-
         .convert-btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(46, 204, 113, 0.4);
         }
-
         .result-section {
             background: linear-gradient(135deg, #3498db, #2980b9);
             color: white;
@@ -246,25 +221,25 @@
             text-align: center;
             margin-bottom: 20px;
         }
-
         .result-primary {
             margin-bottom: 15px;
             padding-bottom: 15px;
             border-bottom: 1px solid rgba(255,255,255,0.2);
         }
-
         .result-title {
             font-size: 0.85rem;
             opacity: 0.9;
             margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
         }
-
         .result-value {
             font-size: 1.5rem;
             font-weight: bold;
             text-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
-
         .result-excess {
             margin-top: 10px;
             font-size: 0.8rem;
@@ -273,53 +248,48 @@
             padding: 8px;
             border-radius: 8px;
         }
-
         .result-excess-title {
             font-size: 0.75rem;
             margin-bottom: 3px;
         }
-
         .result-excess-value {
             font-size: 1.1rem;
             font-weight: bold;
         }
-
         .result-total {
             margin-top: 10px;
             padding-top: 10px;
             border-top: 1px solid rgba(255,255,255,0.2);
         }
-
         .result-total-title {
             font-size: 1rem;
             margin-bottom: 5px;
             opacity: 1;
             font-weight: bold;
         }
-
         .result-total-value {
             font-size: 2rem;
             font-weight: bold;
             color: #98fb98;
             text-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
-
         .result-secondary {
             opacity: 1;
         }
-
         .result-secondary-title {
             font-size: 1rem;
             margin-bottom: 5px;
             font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
         }
-
         .result-secondary-value {
             font-size: 2rem;
             font-weight: bold;
             color: #98fb98;
         }
-
         .customs-section {
             background: #f8f9fa;
             border-radius: 15px;
@@ -327,7 +297,6 @@
             margin-bottom: 20px;
             border-left: 4px solid #e74c3c;
         }
-
         .customs-title {
             font-weight: bold;
             color: #2c3e50;
@@ -335,13 +304,11 @@
             display: flex;
             align-items: center;
         }
-
         .customs-table {
             width: 100%;
             border-collapse: collapse;
             font-size: 0.85rem;
         }
-
         .customs-table th {
             background: #6c757d;
             color: white;
@@ -349,35 +316,28 @@
             text-align: left;
             font-size: 0.8rem;
         }
-
         .customs-table td {
             padding: 8px 6px;
             border-bottom: 1px solid #dee2e6;
         }
-
         .customs-table tr:nth-child(even) {
             background: #f8f9fa;
         }
-
         .customs-table tr:hover {
             background: #e3f2fd;
         }
-
         .category {
             font-weight: 600;
             color: #2c3e50;
         }
-
         .amount {
             font-weight: bold;
             color: #27ae60;
         }
-
         .tax {
             font-weight: bold;
             color: #e74c3c;
         }
-
         .highlight-warning {
             background: linear-gradient(45deg, #ff6b6b, #ffd93d, #6bcf7f, #4ecdc4, #45b7d1);
             background-size: 400% 400%;
@@ -389,13 +349,11 @@
             margin-top: 8px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
-
         @keyframes gradientShift {
             0% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
             100% { background-position: 0% 50%; }
         }
-
         .note {
             font-size: 0.75rem;
             color: #6c757d;
@@ -405,7 +363,21 @@
             border-radius: 5px;
             border-left: 3px solid #ffc107;
         }
-
+        
+        /* Estilos para las banderas SVG */
+        .flag-icon {
+            width: 20px;
+            height: 15px;
+            border-radius: 2px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+        
+        .country-with-flag {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
         @media (max-width: 480px) {
             .container {
                 margin: 5px;
@@ -415,11 +387,9 @@
             .content {
                 padding: 15px;
             }
-
             .customs-table {
                 font-size: 0.75rem;
             }
-
             .customs-table th,
             .customs-table td {
                 padding: 6px 4px;
@@ -430,10 +400,9 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>🇨🇱 Conversor CLP</h1>
+            <h1><span class="flag-icon flag-icon-cl"></span> Conversor CLP</h1>
             <p>Tu guía completa para Chile</p>
         </div>
-
         <div class="content">
             <!-- Sección de Cotizaciones -->
             <div class="rates-section">
@@ -443,17 +412,47 @@
                 </div>
                 
                 <div class="rate-item">
-                    <span class="rate-label">🇺🇸 <strong>USD</strong> / 🇨🇱 <strong>CLP</strong></span>
+                    <span class="rate-label">
+                        <div class="country-with-flag">
+                            <span class="flag-icon flag-icon-us"></span>
+                            <strong>USD</strong>
+                        </div>
+                        /
+                        <div class="country-with-flag">
+                            <span class="flag-icon flag-icon-cl"></span>
+                            <strong>CLP</strong>
+                        </div>
+                    </span>
                     <input type="text" class="editable" id="usdClp" value="972,21" step="0.01">
                 </div>
                 
                 <div class="rate-item">
-                    <span class="rate-label">🇺🇸 <strong>USD MEP</strong> / 🇦🇷 <strong>$ ARS</strong></span>
+                    <span class="rate-label">
+                        <div class="country-with-flag">
+                            <span class="flag-icon flag-icon-us"></span>
+                            <strong>USD MEP</strong>
+                        </div>
+                        /
+                        <div class="country-with-flag">
+                            <span class="flag-icon flag-icon-ar"></span>
+                            <strong>$ ARS</strong>
+                        </div>
+                    </span>
                     <input type="text" class="editable" id="dolarMEP" value="1.350,00" step="0.01">
                 </div>
                 
                 <div class="rate-item">
-                    <span class="rate-label">🇺🇸 <strong>USD Bco Nación</strong> / 🇦🇷 <strong>$ ARS</strong></span>
+                    <span class="rate-label">
+                        <div class="country-with-flag">
+                            <span class="flag-icon flag-icon-us"></span>
+                            <strong>USD Bco Nación</strong>
+                        </div>
+                        /
+                        <div class="country-with-flag">
+                            <span class="flag-icon flag-icon-ar"></span>
+                            <strong>$ ARS</strong>
+                        </div>
+                    </span>
                     <input type="text" class="editable" id="dolarNacion" value="1.355,00" step="0.01">
                 </div>
                 
@@ -461,17 +460,18 @@
                     Última actualización: --
                 </div>
             </div>
-
             <!-- Conversor -->
             <div class="converter-section">
                 <div class="input-group">
                     <label class="input-label" for="clpAmount">💰 Monto en Pesos Chilenos (CLP)</label>
                     <div class="currency-input-container">
-                        <span class="currency-symbol">🇨🇱 $</span>
+                        <span class="currency-symbol">
+                            <span class="flag-icon flag-icon-cl"></span>
+                            $
+                        </span>
                         <input type="text" class="input-field currency-input" id="clpAmount" placeholder="0" inputmode="numeric">
                     </div>
                 </div>
-
                 <div class="input-group">
                     <label class="input-label">🔄 Tipo de Dólar Argentino</label>
                     <div class="selector-group">
@@ -483,16 +483,17 @@
                         </button>
                     </div>
                 </div>
-
                 <button class="convert-btn" onclick="convertCurrency()">
                     🔄 Convertir Moneda
                 </button>
             </div>
-
             <!-- Resultados -->
             <div class="result-section" id="resultSection">
                 <div class="result-primary">
-                    <div class="result-title">🇺🇸 Conversión Principal: CLP → USD</div>
+                    <div class="result-title">
+                        <span class="flag-icon flag-icon-us"></span>
+                        Conversión Principal: CLP → USD
+                    </div>
                     <div class="result-value" id="usdResult">$ 0 USD</div>
                     
                     <!-- Excedente -->
@@ -508,15 +509,19 @@
                     <!-- Total del producto -->
                     <div class="result-total" id="totalSection" style="display: none;">
                         <div class="result-total-title">Total + Imp 50%</div>
-                        <div class="result-total-value" id="totalUsdResult">🇺🇸 $ 0 USD</div>
+                        <div class="result-total-value" id="totalUsdResult">
+                            <span class="flag-icon flag-icon-us"></span> $ 0 USD
+                        </div>
                     </div>
                 </div>
                 <div class="result-secondary">
-                    <div class="result-secondary-title">🇦🇷</div>
-                    <div class="result-secondary-value" id="arsResult">🇦🇷 $ 0</div>
+                    <div class="result-secondary-title">
+                        <span class="flag-icon flag-icon-ar"></span>
+                        Pesos Argentinos
+                    </div>
+                    <div class="result-secondary-value" id="arsResult">$ 0</div>
                 </div>
             </div>
-
             <!-- Cupos Aduaneros -->
             <div class="customs-section">
                 <div class="customs-title">
@@ -554,29 +559,27 @@
                         </tr>
                     </tbody>
                 </table>
-
                 <div class="note">
                     <strong>⚠️ Notas Importantes:</strong><br>
                     • Los cupos <strong>NO son acumulables</strong> entre personas<br>
                     • Los valores se calculan sobre <strong>precios reales o estimados por Aduana</strong><br><br>
                     <div class="highlight-warning">
-                          <div style="text-align: center; font-size: 1.1em; font-weight: bold;">💡 Muy importante:</div>
+                        <div style="text-align: center; font-size: 1.1em; font-weight: bold;">💡 Muy importante:</div>
                         <div style="text-align: center; font-size: 1.1em; font-weight: bold;">NO compre Boludeces</div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
     <script>
         let selectedDollarType = 'mep';
         const CUSTOMS_LIMIT = 300; // USD limit for customs
-
+        
         // Formatear número con puntos de miles y coma decimal (formato chileno/argentino)
         function formatNumber(num) {
             return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
         }
-
+        
         // Formatear número con decimales (punto de miles, coma decimal)
         function formatNumberWithDecimals(num, decimals = 2) {
             const parts = num.toFixed(decimals).split('.');
@@ -584,22 +587,22 @@
             const decimalPart = parts[1];
             return `${integerPart}<sup style="font-size: 0.7em; opacity: 0.7;">,${decimalPart}</sup>`;
         }
-
+        
         // Formatear moneda completa
         function formatCurrency(amount, currency, decimals = 2) {
             if (currency === 'USD') {
-                return `🇺🇸 ${formatNumberWithDecimals(amount, decimals)} ${currency}`;
+                return `$ ${formatNumberWithDecimals(amount, decimals)} ${currency}`;
             } else if (currency === 'ARS') {
                 return `$ ${formatNumber(Math.round(amount))}`;
             }
             return `$ ${formatNumber(amount)} ${currency}`;
         }
-
+        
         // Remover formato para cálculos
         function unformatNumber(str) {
             return str.replace(/\./g, '');
         }
-
+        
         // Función para manejar campos editables de cotizaciones
         function handleRateInput(e) {
             let value = e.target.value;
@@ -607,13 +610,13 @@
             value = value.replace(/[^\d.,]/g, '');
             e.target.value = value;
         }
-
+        
         // Función para convertir valor de cotización a número
         function parseRateValue(str) {
             // Convertir formato chileno/argentino a número
             return parseFloat(str.replace(/\./g, '').replace(',', '.'));
         }
-
+        
         // Manejar entrada con formato de miles
         function handleCurrencyInput(e) {
             let value = e.target.value;
@@ -632,12 +635,12 @@
             } else {
                 // Limpiar resultados si no hay valor
                 document.getElementById('usdResult').textContent = '$ 0 USD';
-                document.getElementById('arsResult').textContent = '$ 0 ARS';
+                document.getElementById('arsResult').textContent = '$ 0';
                 document.getElementById('excessSection').style.display = 'none';
                 document.getElementById('totalSection').style.display = 'none';
             }
         }
-
+        
         function selectDollarType(type) {
             selectedDollarType = type;
             
@@ -645,7 +648,7 @@
             document.getElementById('mepBtn').classList.toggle('active', type === 'mep');
             document.getElementById('nacionBtn').classList.toggle('active', type === 'nacion');
         }
-
+        
         function updateRates() {
             const now = new Date();
             const timestamp = now.toLocaleDateString('es-AR') + ' ' + now.toLocaleTimeString('es-AR', {hour: '2-digit', minute: '2-digit'});
@@ -658,28 +661,28 @@
                 btn.style.transform = 'rotate(0deg)';
             }, 500);
         }
-
+        
         function convertCurrency() {
             const clpInput = document.getElementById('clpAmount').value;
             const clpAmount = parseFloat(unformatNumber(clpInput));
             
             if (!clpAmount || clpAmount <= 0) {
                 // Mostrar estado inicial
-                document.getElementById('usdResult').innerHTML = '🇺🇸 $ 0 USD';
-                document.getElementById('arsResult').innerHTML = '🇦🇷 $ 0';
+                document.getElementById('usdResult').innerHTML = '$ 0 USD';
+                document.getElementById('arsResult').innerHTML = '$ 0';
                 document.getElementById('excessSection').style.display = 'none';
                 document.getElementById('totalSection').style.display = 'none';
                 return;
             }
-
+            
             // Obtener cotizaciones con parsing correcto
             const usdClp = parseRateValue(document.getElementById('usdClp').value);
             const dolarMEP = parseRateValue(document.getElementById('dolarMEP').value);
             const dolarNacion = parseRateValue(document.getElementById('dolarNacion').value);
-
+            
             // Conversión principal: CLP a USD
             const usdAmount = clpAmount / usdClp;
-
+            
             // Calcular excedente sobre el cupo de USD 300
             let excessAmount = 0;
             let taxAmount = 0;
@@ -697,25 +700,25 @@
                 document.getElementById('excessSection').style.display = 'block';
                 document.getElementById('totalSection').style.display = 'block';
                 
-                document.getElementById('excessResult').innerHTML = `🇺🇸 $ ${formatNumberWithDecimals(excessAmount, 2)} USD`;
-                document.getElementById('taxResult').innerHTML = `🇺🇸 $ ${formatNumberWithDecimals(taxAmount, 2)} USD`;
-                document.getElementById('totalUsdResult').innerHTML = `🇺🇸 $ ${formatNumberWithDecimals(finalTotal, 2)} USD`;
+                document.getElementById('excessResult').innerHTML = `$ ${formatNumberWithDecimals(excessAmount, 2)} USD`;
+                document.getElementById('taxResult').innerHTML = `$ ${formatNumberWithDecimals(taxAmount, 2)} USD`;
+                document.getElementById('totalUsdResult').innerHTML = `<span class="flag-icon flag-icon-us"></span> $ ${formatNumberWithDecimals(finalTotal, 2)} USD`;
             } else {
                 // Ocultar sección de excedente
                 document.getElementById('excessSection').style.display = 'none';
                 document.getElementById('totalSection').style.display = 'block';
-                document.getElementById('totalUsdResult').innerHTML = `🇺🇸 $ ${formatNumberWithDecimals(usdAmount, 2)} USD`;
+                document.getElementById('totalUsdResult').innerHTML = `<span class="flag-icon flag-icon-us"></span> $ ${formatNumberWithDecimals(usdAmount, 2)} USD`;
             }
-
+            
             // Conversión secundaria: USD a ARS según tipo seleccionado (usar el total final)
             const arsRate = selectedDollarType === 'mep' ? dolarMEP : dolarNacion;
             const arsAmount = finalTotal * arsRate;
             const dollarTypeName = selectedDollarType === 'mep' ? 'MEP' : 'Nación';
-
-            // Mostrar resultados con formato y banderas
-            document.getElementById('usdResult').innerHTML = `🇺🇸 $ ${formatNumberWithDecimals(usdAmount, 2)} USD`;
-            document.getElementById('arsResult').innerHTML = `🇦🇷 $ ${formatNumber(Math.round(arsAmount))} (${dollarTypeName})`;
-
+            
+            // Mostrar resultados con formato y banderas SVG
+            document.getElementById('usdResult').innerHTML = `$ ${formatNumberWithDecimals(usdAmount, 2)} USD`;
+            document.getElementById('arsResult').innerHTML = `$ ${formatNumber(Math.round(arsAmount))} (${dollarTypeName})`;
+            
             // Efecto visual
             const resultSection = document.getElementById('resultSection');
             resultSection.style.transform = 'scale(0.98)';
@@ -723,20 +726,20 @@
                 resultSection.style.transform = 'scale(1)';
             }, 150);
         }
-
+        
         // Configurar evento de entrada con formato
         document.getElementById('clpAmount').addEventListener('input', handleCurrencyInput);
-
+        
         // Inicializar timestamp
         updateRates();
-
+        
         // Permitir Enter para convertir
         document.getElementById('clpAmount').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
                 convertCurrency();
             }
         });
-
+        
         // Actualizar conversión cuando se cambian las cotizaciones
         document.querySelectorAll('.editable').forEach(input => {
             input.addEventListener('input', handleRateInput);
@@ -748,7 +751,7 @@
                 updateRates();
             });
         });
-
+        
         // Inicializar vista
         convertCurrency();
     </script>
