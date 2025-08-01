@@ -300,7 +300,7 @@
         .result-total-value {
             font-size: 2rem;
             font-weight: bold;
-            color: #ffd700;
+            color: #98fb98;
             text-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
 
@@ -507,13 +507,13 @@
                     
                     <!-- Total del producto -->
                     <div class="result-total" id="totalSection" style="display: none;">
-                        <div class="result-total-title">🇺🇸 Conversión Principal: CLP → USD + Impuesto 50%</div>
-                        <div class="result-total-value" id="totalUsdResult">$ 0 USD</div>
+                        <div class="result-total-title">Total + Imp 50%</div>
+                        <div class="result-total-value" id="totalUsdResult">🇺🇸 0 USD</div>
                     </div>
                 </div>
                 <div class="result-secondary">
-                    <div class="result-secondary-title">🇦🇷 Equivalente en Pesos Argentinos</div>
-                    <div class="result-secondary-value" id="arsResult">$ 0 ARS</div>
+                    <div class="result-secondary-title">🇦🇷</div>
+                    <div class="result-secondary-value" id="arsResult">$ 0</div>
                 </div>
             </div>
 
@@ -588,9 +588,9 @@
         // Formatear moneda completa
         function formatCurrency(amount, currency, decimals = 2) {
             if (currency === 'USD') {
-                return `$ ${formatNumberWithDecimals(amount, decimals)} ${currency}`;
+                return `🇺🇸 ${formatNumberWithDecimals(amount, decimals)} ${currency}`;
             } else if (currency === 'ARS') {
-                return `$ ${formatNumber(Math.round(amount))} ${currency}`;
+                return `$ ${formatNumber(Math.round(amount))}`;
             }
             return `$ ${formatNumber(amount)} ${currency}`;
         }
